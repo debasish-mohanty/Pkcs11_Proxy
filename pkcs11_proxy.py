@@ -1,10 +1,11 @@
 import os
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, flash, redirect, request, jsonify, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, login_user
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import generate_password_hash, check_password_hash
 from PyKCS11 import *
 
 # Initialize Flask app
@@ -37,6 +38,12 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 # Define routes
 @app.route('/sign', methods=['POST'])
@@ -93,6 +100,7 @@ if __name__ == '__main__':
 
     # Run the app
     app.run()
+
 
 '''
 This revised version of the program includes the following changes:
