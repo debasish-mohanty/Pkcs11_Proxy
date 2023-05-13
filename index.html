@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PKCS11 HSM Proxy Service</title>
+</head>
+<body>
+    <h1>PKCS11 HSM Proxy Service</h1>
+    <form id="sign-form">
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message">
+        <button type="submit">Sign</button>
+    </form>
+    <div id="signature"></div>
+    <script>
+        const form = document.getElementById('sign-form');
+        const messageInput = document.getElementById('message');
+        const signatureDiv = document.getElementById('signature');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const message = messageInput.value;
+            const response = await fetch('/sign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            signatureDiv.innerText = `Signature: ${data.signature}`;
+        });
+    </script>
+</body>
+</html>
+
+<!-- 
+    This frontend includes a simple form that allows the user to enter a message to be signed. 
+    When the user submits the form, the frontend sends a POST request to the '/sign' endpoint 
+    of the Python program using the Fetch API. The response from the Python program is then 
+    displayed on the page.
+
+    To use this frontend with the Python program, you can save the code as a file named 
+    'index.html' in the same directory as the Python program and run the Python program using
+    the command gunicorn app:app. Then, you can open a web browser and navigate to 
+    'http://localhost:8000' to access the frontend. 
+-->
